@@ -19,8 +19,9 @@ string Encrypt_Decrypt(string password, string key){
         pass = (unsigned char)((int)password[i] ^ (int)key[i % (key.length())]);
 
         // cout << "Key: " << key[i % password.length()] << "dengan int: " << (int)key[i % password.length()] << endl;
-        // cout << (int)((pass% 58) + 64) << " Pass ke i" << " dengan char: " << ((pass% 58) + 64) << endl;
-        password[i] = (char)(pass % 122 + 32);
+        // cout << (int)((pass)) << " Pass ke i" << " dengan char: " << ((pass)) << endl;
+        password[i] = (char)(pass);
+        // password[i] = (char)(pass);
     }
     return password;
 }
@@ -41,8 +42,8 @@ void DisplayAll(string key) {
             else {
                 cout << i + 1 << ".";
                 for(int j = 0; j < 2; j++){
-                    data >> content[i][j];
-                     
+                    // data >> content[i][j];
+                    getline(data, content[i][j]);
                     cout << Encrypt_Decrypt(content[i][j], key) << " ";
                     // cout << content[i][j] << " ";
                 }
@@ -76,9 +77,8 @@ void Saving(string saved[]) {
     ofstream myfile("data.txt", fstream::app);
     if(myfile.is_open()){     
         for(int j = 0; j < 2; j++){ //inner untuk 2 input akun & pass
-            myfile << saved[j] << " ";
+            myfile << saved[j] << endl;
         } 
-        myfile << endl;
     }
     else {
         cout << "File tidak dapat dibuka/ditemukan";

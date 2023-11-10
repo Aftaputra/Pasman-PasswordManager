@@ -8,23 +8,30 @@
 //myfile = simpan txt
 using namespace std;
 
-string Encrypt_Decrypt(string password, string key){
+
+string Encrypt(string password, string key){
     // used to convert string to integer of the key
     // used as temporary variable for the converted password
-    unsigned char pass;      
-    // cout << password << endl;
+    unsigned char pass;
     for(int i = 0; i < password.length(); i++){
-        // cout << "integer: " << (int)password[i] << " Password ke-i" << " dengan char: " << password[i]<< endl;
-
-        pass = (unsigned char)((int)password[i] ^ (int)key[i % (key.length())]);
-
-        // cout << "Key: " << key[i % password.length()] << "dengan int: " << (int)key[i % password.length()] << endl;
-        // cout << (int)((pass% 58) + 64) << " Pass ke i" << " dengan char: " << ((pass% 58) + 64) << endl;
-        password[i] = (char)(pass % 122 + 32);
+        pass = (unsigned char)((unsigned char)password[i] ^ (unsigned char)key[i % (key.length())]);
+        password[i] = (unsigned char)(pass) + 128;
     }
+
     return password;
 }
 
+string Decypt(string password, string key){
+    // used to convert string to integer of the key
+    // used as temporary variable for the converted password
+    unsigned char pass;
+    for(int i = 0; i < password.length(); i++){
+        pass = (unsigned char)((unsigned char)(password[i] - 128) ^ (unsigned char)key[i % (key.length())]);
+        password[i] = (unsigned char)(pass);
+    }
+
+    return password;
+}
 
 void DisplayAll(string key) {
     string content[10000][2];
@@ -43,33 +50,16 @@ void DisplayAll(string key) {
                 for(int j = 0; j < 2; j++){
                     data >> content[i][j];
                      
-                    cout << Encrypt_Decrypt(content[i][j], key) << " ";
+                    cout << Decypt(content[i][j], key) << " ";
                     // cout << content[i][j] << " ";
                 }
                 cout << endl;
                 i++;
             }
-
         } 
     }
-    data.close();
-}
 
-void GetPassword(int nomor) {
-    string content[10000][2];
-    ifstream data("data.txt"); //deklarasi file
-    //jika file pass.txt bisa terbuka,
-    if(data.is_open()){
-        //masukkan isi pass.txt ke array content[][]
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 2; j++){
-                data >> content[i][j];
-            }
-        }
-    }
     data.close();
-    cout << content[nomor + 1][1];
-    
 }
 
 void Saving(string saved[]) {
@@ -77,27 +67,27 @@ void Saving(string saved[]) {
     if(myfile.is_open()){     
         for(int j = 0; j < 2; j++){ //inner untuk 2 input akun & pass
             myfile << saved[j] << " ";
-        } 
+        }
         myfile << endl;
+        
     }
     else {
         cout << "File tidak dapat dibuka/ditemukan";
     }
+
     myfile.close();
 }
 
-
-
-
 string Generate(int panjang){
-	const string cha = "1234567890-=qwertyuiop[]asdfghjkl;'zxcvbnm,./!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:ZXCVBNM<>?";
-	string pw;
-	for (int i=0;i<panjang;i++){
-		int chpw= rand() % cha.size();
-		pw += cha[chpw];
-		
-	}
-	return pw;
+    const string cha = "1234567890-=qwertyuiop[]asdfghjkl;'zxcvbnm,./!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:ZXCVBNM<>?";
+    string pw;
+    for (int i=0;i<panjang;i++){
+        int chpw= rand() % cha.size();
+        pw += cha[chpw];
+        
+    }
+
+    return pw;
 }
 
 
@@ -115,13 +105,13 @@ int main() {
     cout << endl;
     cout << endl;
     while(true){
-    cout << "Silakan pilih fitur yang diinginkan : " << endl;
-    cout << "1. Input Manual Password" << endl << "2. Auto-generated Password" << endl << "3. Look-up saved password" << endl << "4. Exit" ;
-    cout << endl;
-    
-    int x;
-    cout << "Masukkan angka (1 - 4) = ";
-    cin >> x;
+        cout << "Silakan pilih fitur yang diinginkan : " << endl;
+        cout << "1. Input Manual Password" << endl << "2. Auto-generated Password" << endl << "3. Look-up saved password" << endl << "4. Exit" ;
+        cout << endl;
+        
+        int x;
+        cout << "Masukkan angka (1 - 4) = ";
+        cin >> x;
 
         if(x == 1){
             // //input manual
@@ -132,13 +122,12 @@ int main() {
             cout << "Masukkan ID & Password = ";
             for(int i = 0; i < 2; i++){
                 cin >> InputAcc[i];
-                InputAcc[i] = Encrypt_Decrypt(InputAcc[i], key);
+                InputAcc[i] = Encrypt(InputAcc[i], key);
             }
             Saving(InputAcc);
             cout << "Data berhasil disimpan!" << endl;
             cout << endl;
             Sleep(1000);
-            // system("CLS");
         }
         else if(x == 2){
             //generate random
@@ -152,13 +141,15 @@ int main() {
             cout << "Masukkan Panjang Password= ";
             cin >> ln;
             InputAcc[1] = Generate(ln);
+            cout << "Password: " << InputAcc[1] << endl; 
             for(int i = 0; i < 2; i++){
-                InputAcc[i] = Encrypt_Decrypt(InputAcc[i], key);
+                InputAcc[i] = Encrypt(InputAcc[i], key);
             }
             Saving(InputAcc);
+            cout << "Password: " << InputAcc[1] << endl; 
             cout << "Data berhasil disimpan!" << endl;
             cout << endl;
-            system("CLS");
+
         }
         else if(x == 3){
             //lookup
@@ -173,11 +164,11 @@ int main() {
             cout << "Terimakasih!";
             cout << endl;
             break;
-        } else {
-            cout << "Masukkan yg bener";
+        } 
+        else {
+            cout << "Masukkan angka sesuai opsi(1-4) yang Benar";
             cout << endl;
             continue;
         }
     }
 }
-
